@@ -160,30 +160,75 @@ AvlTree::find(int v)
   return false;
 }
 
-// rebalance1<ml, mr, 1>(): clockwise rotation
-// rebalance1<mr, ml, -1>(): counter-clockwise rotation
-template <AvlTree* AvlTree::*ml, AvlTree* AvlTree::*mr, int balance>
-bool AvlTree::rebalance1(AvlTree* t)
-{
+  // Case #1 single rotation
+  //   insert: Inserting "d"
+  //           A becomes -2 and needs rotation
+  //           B has the same length as before insert
+  //           No propagation.
+  //
+  //   delete: Deleting one "c"
+  //           A becomes -2 and needs rotation
+  //           B becomes shorter
+  //           propagation needed
+  //
   //          P              P
   //          |              |
   //          A              B
   //         / \            / \
   //        /   \          /   \
   //       B    (C)      (D)    A
-  //      / \            (D)   / \
-  //    (D) (E)              (E) (C)
-  //    (D) (E)              (E)
+  //      / \             |    / \
+  //    (D) (E)           d  (E) (C)
+  //     |
+  //     d
+  //
+  // Case #2 single rotation
+  //   insert: No insert case
+  //
+  //   delete: Deleting "c"
+  //           A becomes -2
+  //           B has the same length as before insert
+  //           No propagation.
+  //
+  //          P              P
+  //          |              |
+  //          A              B
+  //         / \            / \
+  //        /   \          /   \
+  //       B    (C)      (D)    A
+  //      / \             |    / \
+  //    (D) (E)           d  (E) (C)
+  //     |   |                |
+  //     d   e                e
+  //
 
-  //      P           P
-  //      |           |
-  //      A           B
-  //     /           / \
-  //    /           /   \
-  //   B           D     A
-  //  / \               /
-  // D   E             E
+  // Case #3 double rotation
+  //   insert: Inserting one "e", either (F) side or (G) side
+  //           A becomes -2 and needs a double rotation
+  //           E has the same length as before insert
+  //           No propagation
+  //
+  //   delete: Deleting one "c"
+  //           A becomes -2 and needs a double rotation
+  //           E becomes shorter
+  //           Propagation needed
+  //
+  //          P              P
+  //          |              |
+  //          A              E
+  //         / \            / \
+  //        /   \          /   \
+  //       B    (C)       B     A
+  //      / \            / \   / \
+  //    (D)  E         (D) (F|G) (C)
+  //        / \
+  //      (F) (G)
 
+// rebalance1<ml, mr, 1>(): clockwise rotation
+// rebalance1<mr, ml, -1>(): counter-clockwise rotation
+template <AvlTree* AvlTree::*ml, AvlTree* AvlTree::*mr, int balance>
+bool AvlTree::rebalance1(AvlTree* t)
+{
   AvlTree* P = t->m_u;
   AvlTree* A = t;
   AvlTree* B = A->*ml;
@@ -227,26 +272,6 @@ bool AvlTree::rebalance1(AvlTree* t)
 template <AvlTree* AvlTree::*ml, AvlTree* AvlTree::*mr, int balance>
 bool AvlTree::rebalance2(AvlTree* t)
 {
-  //       P           P
-  //       |           |
-  //       A           E
-  //      / \         / \
-  //     /   \       /   \
-  //    B    (C)    B     A
-  //   / \         / \   / \
-  // (D)  E      (D) (F|G) (C)
-  //     / \
-  //   (F) (G)
-
-  //      P           P
-  //      |           |
-  //      A           E
-  //     /           / \
-  //    /           /   \
-  //   B           B     A
-  //    \
-  //     E
-
   AvlTree* P = t->m_u;
   AvlTree* A = t;
   AvlTree* B = A->*ml;
