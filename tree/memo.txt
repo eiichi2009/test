@@ -1,0 +1,6 @@
+git config --global user.name "xxx"
+git config --global user.email "xxx"
+git clone git://git.xxx.com/name.git
+git add file.cpp
+git commit -m "xxx"
+git push origin master
