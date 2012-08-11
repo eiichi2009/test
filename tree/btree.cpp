@@ -35,6 +35,7 @@ public:
   virtual Node* OnlyOneChild() = 0;
   virtual void insert(key k, value v) = 0;
   virtual bool find(key k, value& v) = 0;
+  virtual bool find(key k) = 0;
   virtual bool erase(key k) = 0;
   virtual pair<key,Node*> split() = 0;
   virtual void combine(Node* nd) = 0;
@@ -91,6 +92,16 @@ public:
     return false;
   }
 
+  bool find(key k)
+  {
+    for (lpIterator it = data.begin(); it != data.end(); ++it) {
+      if (it->first == k) {
+	return true;
+      }
+    }
+    return false;
+  }
+
   bool erase(key k)
   {
     for (lpIterator it = data.begin(); it != data.end(); ++it) {
@@ -110,7 +121,7 @@ public:
       data.pop_front();
       new_nd->data.push_back(lp);
     }
-    return NonLeafPair(data.front().first, newNode);
+    return NonLeafPair(data.front().first, new_nd);
   }
 
   void combine(Node* nd)
@@ -189,6 +200,11 @@ public:
   bool find(key k, value& v)
   {
     return locate(k)->second->find(k,v);
+  }
+
+  bool find(key k)
+  {
+    return locate(k)->second->find(k);
   }
 
   bool erase(key k)
@@ -336,6 +352,16 @@ public:
     }
   }
 
+  bool find(key k) const
+  {
+    if (root == NULL) {
+      return false;
+    }
+    else {
+      return root->find(k);
+    }
+  }
+
   bool erase(key k)
   {
     if (root == NULL) {
@@ -357,13 +383,17 @@ public:
 int
 main()
 {
-  BTree t(6,4);
-  t.insert(100,10);  t.show();
-  t.insert(101,10);  t.show();
-  t.insert(102,10);  t.show();
-  t.insert(103,10);  t.show();
-  t.insert(104,10);  t.show();
-  t.insert(105,10);  t.show();
-  t.insert(106,10);  t.show();
+  BTree t(4,3);
+  t.insert(-10,10);  t.show();
+  t.insert(-5,10);  t.show();
+  t.insert(0,10);  t.show();
+  t.insert(1,10);  t.show();
+
+  if (t.find(0)) {
+    cout << "found" << endl;
+  }
+  else {
+    cout << "not found" << endl;
+  }
   return 0;
 }
